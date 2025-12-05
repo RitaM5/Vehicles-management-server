@@ -13,6 +13,7 @@ const createVehicleDb = async (req: Request, res: Response) => {
         res.status(500).json({
             success: false,
             message: err.message,
+            error: err,
         });
     }
 };
@@ -37,7 +38,7 @@ const getVehicleDb = async (req: Request, res: Response) => {
         res.status(500).json({
             success: false,
             message: err.message,
-            details: err
+            details: err,
         });
     }
 };
@@ -63,6 +64,7 @@ const getSingleVehicle = async (req: Request, res: Response) => {
         res.status(500).json({
             success: false,
             message: err.message,
+            error: err,
         });
     }
 };
@@ -88,6 +90,32 @@ const updateVehicles = async (req: Request, res: Response) => {
     res.status(500).json({
       success: false,
       message: err.message,
+      error: err,
+    });
+  }
+};
+
+const deleteVehicle =  async (req: Request, res: Response) => {
+  try {
+    const result = await vehicleServices.deleteVehicle(req.params.vehicleId!);
+
+    if (result.rowCount === 0) {
+      res.status(404).json({
+        success: false,
+        message: "Vehicle not found",
+      });
+    } else {
+      res.status(200).json({
+        success: true,
+        message: "Vehicle deleted successfully",
+        data: result.rows,
+      });
+    }
+  } catch (err: any) {
+    res.status(500).json({
+      success: false,
+      message: err.message,
+      error: err,
     });
   }
 };
@@ -97,4 +125,5 @@ export const vehicleControllers = {
     getVehicleDb,
     getSingleVehicle,
     updateVehicles,
+    deleteVehicle,
 }
