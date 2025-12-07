@@ -22,10 +22,15 @@ const dataBase = async () => {
     id SERIAL PRIMARY KEY,                       
     name VARCHAR(100) NOT NULL,                  
     email VARCHAR(100) UNIQUE NOT NULL,             
-    password VARCHAR(255) NOT NULL,               
+    password VARCHAR(255) NOT NULL CHECK (char_length(password) >= 6),               
     phone VARCHAR(20) NOT NULL, 
     role VARCHAR(20) CHECK (role IN ('admin', 'customer')) DEFAULT 'customer'
     )`);
+    
+    await pool.query(`
+    CREATE UNIQUE INDEX IF NOT EXISTS unique_email_lower 
+    ON users (LOWER(email))
+   `);
 
     await pool.query(`
     CREATE TABLE IF NOT EXISTS bookings (

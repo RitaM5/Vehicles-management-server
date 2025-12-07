@@ -18,15 +18,17 @@ const getSingleVehicle = async (id: string) => {
 
 const updateVehicle = async (daily_rent_price: string, availability_status: string, id: string) => {
     const result = await pool.query(
-        `UPDATE vehicles SET daily_rent_price=$1, availability_status=$2 WHERE id=$3 RETURNING *`,
-        [daily_rent_price, availability_status, id]
+        `UPDATE vehicles SET daily_rent_price=$1, availability_status=$2 WHERE id=$3 RETURNING *`, [daily_rent_price, availability_status, id]
     );
 
     return result;
 };
 
 const deleteVehicle = async (id: string) => {
-    const result = await pool.query(`DELETE FROM vehicles WHERE id = $1`, [id]);
+    const result = await pool.query(`DELETE FROM vehicles WHERE id = $1 AND id NOT IN (
+        SELECT vehicle_id
+        FROM bookings
+        WHERE status = 'active'`, [id]);
     return result;
 }
 
