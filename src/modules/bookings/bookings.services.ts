@@ -62,7 +62,7 @@ const getBookings = async (loggedInUser: { id: number, role: string }) => {
             JOIN users u ON b.customer_id = u.id
             JOIN vehicles v ON b.vehicle_id = v.id;
 `);
-         const result = formatted.rows.map(row => ({
+        const result = formatted.rows.map(row => ({
             id: row.id,
             customer_id: row.customer_id,
             vehicle_id: row.vehicle_id,
@@ -98,19 +98,19 @@ const getBookings = async (loggedInUser: { id: number, role: string }) => {
             JOIN vehicles v ON b.vehicle_id = v.id
             WHERE b.customer_id = $1;
 `, [loggedInUser.id]);
-   const result = formatted.rows.map(row => ({
-        id: row.id,
-        vehicle_id: row.vehicle_id,
-        rent_start_date: row.rent_start_date,
-        rent_end_date: row.rent_end_date,
-        total_price: Number(row.total_price),
-        status: row.status,
-        vehicle: {
-            vehicle_name: row.vehicle_name,
-            registration_number: row.registration_number,
-            type: row.type
-        }
-    }));
+        const result = formatted.rows.map(row => ({
+            id: row.id,
+            vehicle_id: row.vehicle_id,
+            rent_start_date: row.rent_start_date,
+            rent_end_date: row.rent_end_date,
+            total_price: Number(row.total_price),
+            status: row.status,
+            vehicle: {
+                vehicle_name: row.vehicle_name,
+                registration_number: row.registration_number,
+                type: row.type
+            }
+        }));
         return result;
     }
 };
@@ -120,14 +120,18 @@ const updateBooking = async (
     status: "cancelled" | "returned",
     loggedInUser: { id: number; role: string }
 ) => {
-    const res = await pool.query(`SELECT * FROM bookings WHERE id = $1`, [bookingId]);
-    if (res.rows.length === 0) throw new Error("Booking not found");
+    const result = await pool.query(`SELECT * FROM bookings WHERE id = $1`, [bookingId]);
+    if (result.rows.length === 0) {
+        throw new Error("Booking not found");
+    }
 
-    const booking = res.rows[0];
+    const booking = result.rows[0];
 
     if (loggedInUser.role === "customer") {
-        if (booking.customer_id !== loggedInUser.id) throw new Error("Unauthorized");
-        if (status === "cancelled") {
+        if (booking.customer_id !== loggedInUser.id) {
+            throw new Error("Unauthorized");
+        }
+        else if (status === "cancelled") {
             const today = new Date();
             if (new Date(booking.rent_start_date) <= today) {
                 throw new Error("Cannot cancel booking after start date");

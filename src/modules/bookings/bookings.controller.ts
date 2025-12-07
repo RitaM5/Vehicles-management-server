@@ -62,7 +62,6 @@ export const updateBooking = async (req: Request, res: Response) => {
                 message: "Unauthorized"
             });
         }
-        // const loggedInUser = req.user!;
         const loggedInUser = {
             id: req.user.id,
             role: req.user.role
@@ -81,7 +80,7 @@ export const updateBooking = async (req: Request, res: Response) => {
             data: result,
         });
     } catch (err: any) {
-        res.status(err.message.includes("Unauthorized") ? 403 : 400).json({
+        res.status(500).json({
             success: false,
             message: err.message,
         });
