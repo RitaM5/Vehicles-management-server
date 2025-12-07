@@ -66,19 +66,36 @@ export const updateBooking = async (req: Request, res: Response) => {
             id: req.user.id,
             role: req.user.role
         };
-        const bookingId = Number(req.params.bookingId);
+        const bookingId = Number(req.params.bookingId!);
         const { status } = req.body;
 
         const result = await bookingServices.updateBooking(bookingId, status, loggedInUser);
-
-        res.status(200).json({
-            success: true,
-            message:
-                status === "cancelled"
-                    ? "Booking cancelled successfully"
-                    : "Booking marked as returned. Vehicle is now available",
-            data: result,
-        });
+        if (loggedInUser.role === 'admin') {
+            if (status === 'returned') {
+                return res.status(200).json({
+                    success: true,
+                    message: "Booking marked as returned. Vehicle is now available",
+                    data: result,
+                });
+            }
+            return res.status(401).json({
+                success: false,
+                message: "You can't change cancel status",
+            });
+        }
+        else if (loggedInUser.role === 'customer') {
+            if (status === 'cancelled') {
+                return res.status(200).json({
+                    success: true,
+                    message: "Booking cancelled successfully",
+                    data: result,
+                });
+            }
+            return res.status(401).json({
+                success: false,
+                message: "You can't change return status",
+            });
+        }
     } catch (err: any) {
         res.status(500).json({
             success: false,

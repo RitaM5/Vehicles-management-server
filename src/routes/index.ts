@@ -9,7 +9,7 @@ const router = express.Router();
 router.use("/api/v1", vehicleRoutes);
 router.use("/api/v1", authRoutes);
 router.use("/api/v1", userRoutes);
-router.use("/api/v1/", bookingsRoutes);
+router.use("/api/v1", bookingsRoutes);
 
 
 export default router;

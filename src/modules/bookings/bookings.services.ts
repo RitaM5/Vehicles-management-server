@@ -120,19 +120,27 @@ const updateBooking = async (
     status: "cancelled" | "returned",
     loggedInUser: { id: number; role: string }
 ) => {
+    const today = new Date();
     const result = await pool.query(`SELECT * FROM bookings WHERE id = $1`, [bookingId]);
     if (result.rows.length === 0) {
         throw new Error("Booking not found");
     }
 
     const booking = result.rows[0];
+    if (new Date(booking.rent_end_date) <= today && booking.status !== "returned") {
+        await pool.query(`UPDATE bookings SET status = 'returned' WHERE id = $1`, [bookingId]);
+        await pool.query(
+            `UPDATE vehicles SET availability_status = 'available' WHERE id = $1`,
+            [booking.vehicle_id]
+        );
+         booking.status = "returned";
+            if (status === "cancelled") {
+            throw new Error("Cannot cancel booking after end date. Booking auto-returned");
+        }
+    }
 
     if (loggedInUser.role === "customer") {
-        if (booking.customer_id !== loggedInUser.id) {
-            throw new Error("Unauthorized");
-        }
-        else if (status === "cancelled") {
-            const today = new Date();
+         if (status === "cancelled") {
             if (new Date(booking.rent_start_date) <= today) {
                 throw new Error("Cannot cancel booking after start date");
             }

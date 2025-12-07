@@ -7,6 +7,6 @@ const router = express.Router();
 
 router.get("/users", auth("admin"), userControllers.getUser);
 router.put("/users/:userId", auth("admin","customer"), userControllers.userUpdate);
-router.put("/users/:userId", auth("admin"), userControllers.deleteUser);
+router.delete("/users/:userId", auth("admin"), userControllers.deleteUser);
 
 export const userRoutes = router;

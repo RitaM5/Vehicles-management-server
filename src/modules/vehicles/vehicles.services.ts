@@ -24,13 +24,28 @@ const updateVehicle = async (daily_rent_price: string, availability_status: stri
     return result;
 };
 
+// const deleteVehicle = async (id: string) => {
+//     const result = await pool.query(`DELETE FROM vehicles WHERE id = $1 AND id NOT IN (
+//         SELECT vehicle_id
+//         FROM bookings
+//         WHERE status = 'active'`, [id]);
+//     return result;
+// }
+
 const deleteVehicle = async (id: string) => {
-    const result = await pool.query(`DELETE FROM vehicles WHERE id = $1 AND id NOT IN (
-        SELECT vehicle_id
-        FROM bookings
-        WHERE status = 'active'`, [id]);
+    const result = await pool.query(
+        `DELETE FROM vehicles
+         WHERE id = $1
+         AND id NOT IN (
+             SELECT vehicle_id
+             FROM bookings
+             WHERE status = 'active'
+         )`,
+        [id]
+    );
     return result;
-}
+};
+
 
 
 export const vehicleServices = {

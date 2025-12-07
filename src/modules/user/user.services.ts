@@ -44,7 +44,7 @@ const deleteUser = async (id: string) => {
     const result = await pool.query(`DELETE FROM users WHERE id=$1  AND id NOT IN (
         SELECT customer_id
         FROM bookings
-        WHERE status = 'active') '`, [id])
+        WHERE status = 'active')`, [id])
     return result;
 }
 
