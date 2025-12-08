@@ -41,9 +41,13 @@ export const getBookings = async (req: Request, res: Response) => {
         res.status(200).json({
             success: true,
             message:
-                loggedInUser.role === "admin"
-                    ? "Bookings retrieved successfully"
-                    : "Your bookings retrieved successfully",
+                result.length === 0
+                    ? loggedInUser.role === "admin"
+                        ? "No bookings found"
+                        : "You have no bookings yet"
+                    : loggedInUser.role === "admin"
+                        ? "Bookings retrieved successfully"
+                        : "Your bookings retrieved successfully",
             data: result,
         });
     } catch (err: any) {

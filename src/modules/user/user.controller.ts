@@ -52,8 +52,8 @@ const userUpdate = async (req: Request, res: Response) => {
 
 const deleteUser = async (req: Request, res: Response) => {
     try {
-        const result = await userServices.deleteUser(req.params.userId!);
-        if (result.rows.length === 0) {
+        const result = await userServices.deleteUser(Number(req.params.userId));
+        if (result.rowCount === 0) {
             res.status(404).json({
                 success: false,
                 message: "User not found"

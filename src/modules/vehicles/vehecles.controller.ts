@@ -25,6 +25,7 @@ const getVehicleDb = async (req: Request, res: Response) => {
             res.status(200).json({
                 success: true,
                 message: "No vehicles found",
+                "data": []
             });
         }
         else {
@@ -70,9 +71,9 @@ const getSingleVehicle = async (req: Request, res: Response) => {
 };
 
 const updateVehicles = async (req: Request, res: Response) => {
-  const {daily_rent_price, availability_status } = req.body;
+  const {vehicle_name, type, registration_number, daily_rent_price, availability_status } = req.body;
   try {
-    const result = await vehicleServices.updateVehicle(daily_rent_price, availability_status, req.params.vehicleId!);
+    const result = await vehicleServices.updateVehicle(vehicle_name, type, registration_number, daily_rent_price, availability_status, req.params.vehicleId!);
 
     if (result.rows.length === 0) {
       res.status(404).json({
@@ -108,7 +109,6 @@ const deleteVehicle =  async (req: Request, res: Response) => {
       res.status(200).json({
         success: true,
         message: "Vehicle deleted successfully",
-        data: result.rows,
       });
     }
   } catch (err: any) {

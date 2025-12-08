@@ -40,11 +40,17 @@ const updateUser = async (payload: Record<string, unknown>, id: number, loggedIn
     return result.rows[0];
 };
 
-const deleteUser = async (id: string) => {
-    const result = await pool.query(`DELETE FROM users WHERE id=$1  AND id NOT IN (
-        SELECT customer_id
-        FROM bookings
-        WHERE status = 'active')`, [id])
+const deleteUser = async (id: number) => {
+    const result = await pool.query(`
+        DELETE FROM users u
+        WHERE u.id = $1
+        AND NOT EXISTS (
+            SELECT 1
+            FROM bookings b
+            WHERE b.customer_id = u.id
+            AND LOWER(TRIM(b.status)) = 'active'
+        )
+    `, [id]);
     return result;
 }
 

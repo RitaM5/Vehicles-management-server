@@ -2,7 +2,7 @@
 
 A simple and efficient **Vehicle Rental System Backend** built with **Node.js**, **Express**, **TypeScript**, and **PostgreSQL**.
 
-🌐 **Live URL:** [https://live-deployment-link.com](https://live-deployment-link.com)  
+🌐 **Live URL:** [https://vehicle-management-server.vercel.app](https://vehicle-management-server.vercel.app)  
 💻 **GitHub Repo:** [https://github.com/RitaM5/Vehicles-management-server.git](https://github.com/RitaM5/Vehicles-management-server.git)
 
 ---
